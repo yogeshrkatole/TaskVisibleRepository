@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task List</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Form styles */
+        .task-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .task-form form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        .task-form input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            height: 40px; /* Set height of input */
+            box-sizing: border-box; /* Ensures padding is included in height */
+        }
+        .task-form button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            height: 40px; /* Set height of button to match input */
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            box-sizing: border-box; /* Ensures padding is included in height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .task-form button:hover {
+            background-color: #218838;
+        }
+
+        /* Table styles */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed; /* Ensures fixed width for each column */
+        }
+        .task-table th, .task-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd; /* Adds borders to each table cell */
+            word-wrap: break-word; /* Allows long text to wrap within cells */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adds ellipsis when text is too long */
+        }
+        .task-table th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* For the task column specifically */
+        .task-table td.task-column {
+            max-width: 250px; /* Limit the width of the task column */
+            white-space: normal; /* Allows wrapping of long text */
+        }
+
+        /* Actions buttons styles */
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+        .actions button, .actions a {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Ensures text is centered within the button */
+            height: 40px; /* Set consistent height for all buttons */
+        }
+        .actions .delete {
+            background-color: #dc3545;
+        }
+        .actions .delete:hover {
+            background-color: #c82333;
+        }
+        .actions .edit {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .actions .edit:hover {
+            background-color: #e0a800;
+        }
+        .actions .complete {
+            background-color: #28a745;
+        }
+        .actions .complete:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Manager</h1>
+
+        <!-- Form to add a new task in one line -->
+        <div class="task-form">
+            <form action="/tasks" method="post">
+                <input type="text" name="task" placeholder="Enter your task" required />
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+
+        <!-- Task List Table -->
+        <h2>Task List</h2>
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="task : ${tasks}">
+                    <!-- Display task name with completed style if applicable -->
+                    <td class="task-column" th:text="${task.task}" th:classappend="${task.completed ? 'completed' : ''}"></td>
+                    
+                    <!-- Display status as "Completed" or "Pending" -->
+                    <td th:text="${task.completed ? 'Completed' : 'Pending'}"></td>
+                    
+                    <!-- Actions: Edit, Delete, and Toggle Completion -->
+                    <td class="actions">
+                        <!-- Toggle completion status -->
+                        <form action="/tasks/complete/{id}" method="post" th:action="@{/tasks/complete/{id}(id=${task.id})}" style="display:inline;">
+                            <button type="submit" class="complete" th:text="${task.completed ? 'Mark Incomplete' : 'Mark Complete'}"></button>
+                        </form>
+                        
+                        <!-- Edit task -->
+                        <a th:href="@{/tasks/update/{id}(id=${task.id})}" class="edit">Edit</a>
+                        
+                        <!-- Delete task -->
+                        <form action="/tasks/delete/{id}" method="post" th:action="@{/tasks/delete/{id}(id=${task.id})}" style="display:inline;">
+                            <button type="submit" class="delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
