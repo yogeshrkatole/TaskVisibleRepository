@@ -18,6 +18,7 @@
 
 	<properties>
 		<java.version>11</java.version> <!-- Set Java version to 11 -->
+	       <maven.color>false</maven.color>
 	</properties>
 
 	<dependencies>
